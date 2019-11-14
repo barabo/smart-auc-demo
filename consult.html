@@ -8,9 +8,9 @@
 
 <body>
   <div>
-    <form action="consult" method="POST">
+    <form action="evaluate" method="POST">
       <table>
-        <caption>Patient Demographics</caption>
+        <caption>Enter Patient Demographics</caption>
         <tr>
           <th><label for="gender">Gender</label></th>
           <td>
@@ -29,7 +29,11 @@
           <th><label for="indication">Indication</label></th>
           <td>
             <select name="indication" required>
-              <option value="headache">headache</option>
+              <option value="13213009">congenital heart disease</option>
+              <option value="25064002">headache</option>
+              <option value="279039007">lower back pain</option>
+              <option value="423341008">optic disc edema</option>
+              <option value="27355003">toothache</option>
             </select>
           </td>
         </tr>
@@ -37,7 +41,11 @@
           <th><label for="procedure">Procedure</label></th>
           <td>
             <select name="procedure" required>
-              <option value="xray">x-ray</option>
+              <option value="75561">cardiac mri</option>
+              <option value="70450">ct scan - no contrast material</option>
+              <option value="71275">cta - with contrast material</option>
+              <option value="72133">lumbar spine ct scan</option>
+              <option value="70544">mra - head</option>
             </select>
           </td>
         </tr>

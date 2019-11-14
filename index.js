@@ -1,5 +1,4 @@
 "use strict";
-// See: https://codeshack.io/basic-login-system-nodejs-express-mysql/
 const express = require('express');
 const session = require('express-session');
 const bodyParser = require('body-parser');
@@ -32,11 +31,11 @@ app.get('/consult', function(request, response) {
   }
 });
 
-app.post('/consult', function(request, response) {
+app.post('/evaluate', function(request, response) {
   if (!request.session.loggedin) {
     response.status(404).send('You must be logged in to access this.');
   } else {
-    response.status(200).send('You entered ' + JSON.stringify(request.body));
+    response.status(200).send('Evaluating demographics ' + JSON.stringify(request.body));
   }
   response.end();
 });
