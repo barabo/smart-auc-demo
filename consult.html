@@ -1,25 +1,50 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8">
-    <title>AUC Guidance App</title>
-  </head>
-  <body>
-    <div>
-      <h1>Patient Demographics</h1>
-      <form action="consult" method="POST">
-        <label for="gender">Gender</label>
-        <select name="gender" required>
-          <option value="male">Male</option>
-          <option value="female">Female</option>
-          <option value="other">Other</option>
-        </select>
-        <br>
-        <label for="age">Age</label>
-        <input type="age" name="age" placeholder="0" required>
-        <br>
-        <input type="submit">
-      </form>
-    </div>
-  </body>
+
+<head>
+  <meta charset="utf-8">
+  <title>Demo AUC Guidance App</title>
+</head>
+
+<body>
+  <div>
+    <form action="consult" method="POST">
+      <table>
+        <caption>Patient Demographics</caption>
+        <tr>
+          <th><label for="gender">Gender</label></th>
+          <td>
+            <select name="gender" required>
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+              <option value="other">Other</option>
+            </select>
+          </td>
+        </tr>
+        <tr>
+          <th><label for="age">Age</label></th>
+          <td><input name="age" required></td>
+        </tr>
+        <tr>
+          <th><label for="indication">Indication</label></th>
+          <td>
+            <select name="indication" required>
+              <option value="headache">headache</option>
+            </select>
+          </td>
+        </tr>
+        <tr>
+          <th><label for="procedure">Procedure</label></th>
+          <td>
+            <select name="procedure" required>
+              <option value="xray">x-ray</option>
+            </select>
+          </td>
+        </tr>
+      </table>
+      <input type="submit">
+    </form>
+  </div>
+</body>
+
 </html>
