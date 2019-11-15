@@ -6,7 +6,7 @@
   <title>Demo AUC Guidance App</title>
 </head>
 
-<body>
+<body onload="populate(document.forms[0])">
   <div>
     <form action="evaluate" method="POST">
       <table>
@@ -15,9 +15,9 @@
           <th><label for="gender">Gender</label></th>
           <td>
             <select name="gender" required>
-              <option value="male">Male</option>
-              <option value="female">Female</option>
-              <option value="other">Other</option>
+              <option id="male" value="male">Male</option>
+              <option id="female" value="female">Female</option>
+              <option id="other" value="other">Other</option>
             </select>
           </td>
         </tr>
@@ -41,7 +41,7 @@
         <tr>
           <th><label for="procedure">Procedure</label></th>
           <td>
-            <input list="procedures" name="procedure">
+            <input list="procedures" name="procedure" required>
             <datalist id="procedures">
               <option value="75561">cardiac mri</option>
               <option value="70450">ct scan - no contrast material</option>
@@ -56,5 +56,25 @@
     </form>
   </div>
 </body>
+
+<script>
+
+function getUrlVars() {
+  const vars = {};
+  const parts = window.location.href
+    .replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m, key, value) {
+      vars[key] = value;
+    });
+  return vars;
+}
+
+function populate(form) {
+  const params = getUrlVars();
+  const gender = form.elements.gender.options[params.gender];
+  if (params.age) form.elements.age.value = params.age;
+  if (gender) gender.selected = true;
+}
+
+</script>
 
 </html>
