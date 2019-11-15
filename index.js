@@ -3,6 +3,8 @@ const express = require('express');
 const session = require('express-session');
 const bodyParser = require('body-parser');
 const path = require('path');
+const fhirClient = require("fhirclient");
+
 const port = process.env.PORT || '3000';
 const login = `<a href="http://localhost:${port}/">login</a>`;
 
@@ -63,6 +65,13 @@ const cptReasons = {
   [CPT.CARDIAC_MRI]: new Reasons([[SNOMED.CONGENITAL_HEART_DISEASE]], []),
 };
 
+function evaluate(query) {
+  const { procedure, indication } = query;
+  const reasons = cptReasons[procedure];
+  if (reasons) return reasons.getRating(new Set([indication]));
+  return 'no-guidelines-apply';
+}
+
 const app = express();
 app.use(session({
   secret: 'secret',
@@ -73,11 +82,37 @@ app.use(bodyParser.urlencoded({extended : true}));
 app.use(bodyParser.json());
 
 app.get('/', function(request, response) {
-  if (request.session.loggedin) {
+  if (request.session.smart) {
+    fhirClient(request, response).ready()
+      .then(client => Promise.all([client.user.read(), client.patient.read()]))
+      .then(function (values) {
+        const provider = values[0], patient = values[1];
+        const now = new Date().getTime();
+        const then = new Date(patient.birthDate).getTime();
+        const year = 365.25 * 24 * 60 * 60 * 1000;
+        const age = now - then;
+        session.query = {
+          providerId: provider.id,
+          gender: patient.gender,
+          age: Math.round(age / year)
+        };
+        request.session.loggedin = true;
+        response.redirect('/consult?age=' + Math.round(age / year) + '&gender=' + patient.gender);
+      })
+      .catch(console.error);
+  } else if (request.session.loggedin) {
     response.redirect('/consult');
   } else {
     response.sendFile(path.join(__dirname + '/login.html'));
   }
+});
+
+app.get('/launch', (req, res) => {
+  fhirClient(req, res).authorize({
+    'client_id': 'my_web_app',
+    'scope': 'patient/*.read openid profile launch',
+  });
+  req.session.smart = true;
 });
 
 app.get('/consult', function(request, response) {
@@ -88,13 +123,16 @@ app.get('/consult', function(request, response) {
   }
 });
 
+app.get('/evaluate', function(request, response) {
+  const query = { ...request.query, ...session.query };
+  response.status(200).send(evaluate(query)).end();
+});
+
 app.post('/evaluate', function(request, response) {
   if (!request.session.loggedin) {
     response.status(404).send(`You must ${login} to access this.`);
   } else {
-    const reasons = cptReasons[request.body.procedure];
-    const rating = reasons.getRating(new Set([request.body.indication]));
-    response.status(200).send(rating);
+    response.status(200).send(evaluate(request.body));
   }
   response.end();
 });
